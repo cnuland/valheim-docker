@@ -12,15 +12,6 @@ FROM alpine:latest as ScriptSanitize
 WORKDIR /data/scripts
 COPY src/scripts/* ./
 
-RUN adduser \ 
-	--disabled-login \ 
-	--shell /bin/bash \ 
-	--gecos "" \ 
-	steam
-
-# Add to sudo group
-RUN usermod -a -G sudo steam
-
 RUN apk add dos2unix  --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted \
     && dos2unix /data/scripts/**
 
