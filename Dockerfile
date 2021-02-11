@@ -67,6 +67,5 @@ RUN usermod -u ${PUID} steam \
 # Game Ports
 EXPOSE 2456-2458/udp
 
-USER steam
 ENTRYPOINT ["/bin/bash","/entrypoint.sh"]
 CMD ["/bin/bash", "/home/steam/scripts/start_valheim.sh"]
