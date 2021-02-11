@@ -1,10 +1,10 @@
+  
 #!/usr/bin/env bash
 ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >/etc/timezone
 
 echo "
 ###########################################################################
 Valheim Server - $(date)
-
 Initializing your container...
 ###########################################################################
 "
@@ -48,6 +48,6 @@ chown -R ${STEAM_UID}:${STEAM_GID} /home/steam/valheim
 log "Launching as steam..."
 cd /home/steam/valheim || exit 1
 
-trap 'exec goso steam cd /home/steam/valheim && odin stop' INT TERM EXIT
+#trap 'exec goso steam cd /home/steam/valheim && odin stop' INT TERM
 
 exec gosu steam "$@"
