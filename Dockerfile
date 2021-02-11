@@ -24,8 +24,9 @@ RUN apt-get update          \
     && apt-get install -y   \
     htop net-tools nano     \
     netcat curl wget        \
-    cron sudo gosu          \
-    && gosu nobody true
+    cron sudo gosu dos2unix \
+    && gosu nobody true     \
+    && dos2unix
 
 # Set up timezone information
 ENV TZ=America/Los_Angeles
@@ -41,33 +42,27 @@ RUN crontab /etc/cron.d/auto-update
 
 # Server Specific env variables.
 ENV PORT "2456"
-ENV NAME "valheim.apps.okd4.cjlabs.dev"
+ENV NAME "Valheim Docker"
 ENV WORLD "Dedicated"
 ENV PUBLIC "1"
 ENV PASSWORD "12345"
 ENV AUTO_UPDATE "0"
 
-COPY --from=ScriptSanitize /data/scripts/*.sh /home/steam/scripts/
-COPY --from=ScriptSanitize /data/scripts/entrypoint.sh /entrypoint.sh
+COPY  ./src/scripts/*.sh /home/steam/scripts/
+COPY  ./src/scripts/entrypoint.sh /entrypoint.sh
 COPY --from=RustBuilder /data/odin/target/release /home/steam/.odin
 
-RUN chmod 777 /entrypoint.sh
-RUN chmod 777 -R /home/steam/scripts/
-RUN chmod 777 -R /home/steam/.odin
+RUN chmod 755 /entrypoint.sh
+RUN chmod 755 -R /home/steam/scripts/
+RUN chmod 755 -R /home/steam/.odin
 
 #WORKDIR /home/steam/valheim
 
 ENV PUID=1000
 ENV PGID=1000
-
 RUN usermod -u ${PUID} steam \
     && groupmod -g ${PGID} steam \
     && chsh -s /bin/bash steam
-
-USER steam
-
-# Game Ports
-EXPOSE 2456-2458/udp
 
 ENTRYPOINT ["/bin/bash","/entrypoint.sh"]
 CMD ["/bin/bash", "/home/steam/scripts/start_valheim.sh"]
