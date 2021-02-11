@@ -52,8 +52,8 @@ COPY --from=ScriptSanitize /data/scripts/entrypoint.sh /entrypoint.sh
 COPY --from=RustBuilder /data/odin/target/release /home/steam/.odin
 
 RUN chmod 777 /entrypoint.sh
-RUN chmod 77 -R /home/steam/scripts/
-RUN chmod 77 -R /home/steam/.odin
+RUN chmod 777 -R /home/steam/scripts/
+RUN chmod 777 -R /home/steam/.odin
 
 #WORKDIR /home/steam/valheim
 
