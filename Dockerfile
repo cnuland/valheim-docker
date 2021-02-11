@@ -12,6 +12,15 @@ FROM alpine:latest as ScriptSanitize
 WORKDIR /data/scripts
 COPY src/scripts/* ./
 
+RUN adduser \ 
+	--disabled-login \ 
+	--shell /bin/bash \ 
+	--gecos "" \ 
+	steam
+
+# Add to sudo group
+RUN usermod -a -G sudo steam
+
 RUN apk add dos2unix  --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted \
     && dos2unix /data/scripts/**
 
@@ -47,9 +56,9 @@ ENV PUBLIC "1"
 ENV PASSWORD "12345"
 ENV AUTO_UPDATE "0"
 
-COPY --from=ScriptSanitize --chown=steam:steam  /data/scripts/*.sh /home/steam/scripts/
-COPY --from=ScriptSanitize --chown=steam:steam  /data/scripts/entrypoint.sh /entrypoint.sh
-COPY --from=RustBuilder  --chown=steam:steam /data/odin/target/release /home/steam/.odin
+COPY --from=ScriptSanitize /data/scripts/*.sh /home/steam/scripts/
+COPY --from=ScriptSanitize /data/scripts/entrypoint.sh /entrypoint.sh
+COPY --from=RustBuilder /data/odin/target/release /home/steam/.odin
 
 #WORKDIR /home/steam/valheim
 
@@ -57,7 +66,12 @@ ENV PUID=1000
 ENV PGID=1000
 RUN usermod -u ${PUID} steam \
     && groupmod -g ${PGID} steam \
-    && chsh -s /bin/bash steam
+    && chsh -s /bin/bash steam \
+   && chmod -R 755 steam
+   
+# Game Ports
+EXPOSE 2456-2458/udp
 
+USER steam
 ENTRYPOINT ["/bin/bash","/entrypoint.sh"]
 CMD ["/bin/bash", "/home/steam/scripts/start_valheim.sh"]
