@@ -47,9 +47,9 @@ ENV PUBLIC "1"
 ENV PASSWORD "12345"
 ENV AUTO_UPDATE "0"
 
-COPY --from=ScriptSanitize --chmod=755  /data/scripts/*.sh /home/steam/scripts/
-COPY --from=ScriptSanitize --chmod=755  /data/scripts/entrypoint.sh /entrypoint.sh
-COPY --from=RustBuilder  --chmod=755 /data/odin/target/release /home/steam/.odin
+COPY --from=ScriptSanitize --chown=steam:steam  /data/scripts/*.sh /home/steam/scripts/
+COPY --from=ScriptSanitize --chown=steam:steam  /data/scripts/entrypoint.sh /entrypoint.sh
+COPY --from=RustBuilder  --chown=steam:steam /data/odin/target/release /home/steam/.odin
 
 #WORKDIR /home/steam/valheim
 
