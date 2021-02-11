@@ -21,9 +21,9 @@ log() {
 
 log "Switching UID and GID"
 # shellcheck disable=SC2086
-usermod -u ${PUID} steam || echo "Looks like no changes were needed to the user!"
+#usermod -u ${PUID} steam || echo "Looks like no changes were needed to the user!"
 # shellcheck disable=SC2086
-groupmod -g ${PGID} steam || echo "Looks like no changes were needed to the user!"
+#groupmod -g ${PGID} steam || echo "Looks like no changes were needed to the user!"
 
 log "Setting up file systems"
 STEAM_UID=${PUID:=1000}
