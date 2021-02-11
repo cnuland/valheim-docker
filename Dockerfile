@@ -64,7 +64,7 @@ RUN usermod -u ${PUID} steam \
     && groupmod -g ${PGID} steam \
     && chsh -s /bin/bash steam
 
-USER 0
+USER steam
 
 # Game Ports
 EXPOSE 2456-2458/udp
