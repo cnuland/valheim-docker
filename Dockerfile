@@ -59,11 +59,11 @@ RUN chmod +x -R /home/steam/.odin
 
 ENV PUID=1000
 ENV PGID=1000
+
 RUN usermod -u ${PUID} steam \
     && groupmod -g ${PGID} steam \
-    && chsh -s /bin/bash steam \
-   && chmod -R 755 steam
-   
+    && chsh -s /bin/bash steam
+    
 # Game Ports
 EXPOSE 2456-2458/udp
 
