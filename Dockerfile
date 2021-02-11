@@ -60,6 +60,8 @@ COPY --from=ScriptSanitize /data/scripts/*.sh /home/steam/scripts/
 COPY --from=ScriptSanitize /data/scripts/entrypoint.sh /entrypoint.sh
 COPY --from=RustBuilder /data/odin/target/release /home/steam/.odin
 
+RUN chmod +x /entrypoint.sh
+
 #WORKDIR /home/steam/valheim
 
 ENV PUID=1000
