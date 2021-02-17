@@ -43,7 +43,7 @@ COPY ./src/scripts/steam_bashrc.sh /home/steam/.bashrc
 
 RUN chmod 755 /entrypoint.sh
 RUN chmod 755 -R /home/steam/scripts/
-RUN chmod 755 -R /usr/local/bin/odin/
+RUN chmod 755 /usr/local/bin/odin
 RUN chown steam:steam /home/steam/.bashrc
 
 # Auto Backup Configs
