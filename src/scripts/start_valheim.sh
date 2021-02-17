@@ -3,64 +3,72 @@ cd /home/steam/valheim || exit 1
 STEAM_UID=${PUID:=1000}
 STEAM_GID=${PGID:=1000}
 
-initialize () {
-  echo "
-###########################################################################
-Valheim Server - $(date)
-STEAM_UID ${STEAM_UID} - STEAM_GUID ${STEAM_GID}
-
-$1
-
-###########################################################################
-  "
+log() {
+  PREFIX="[Valheim][steam]"
+  printf "%-16s: %s\n" "${PREFIX}" "$1"
+}
+line () {
+  log "###########################################################################"
 }
 
-log () {
-  echo "[Valheim][steam]: $1"
+initialize () {
+  line
+  log "Valheim Server - $(date)"
+  log "STEAM_UID ${STEAM_UID} - STEAM_GUID ${STEAM_GID}"
+  log "$1"
+  line
+}
+
+cleanup() {
+    log "Halting server! Received interrupt!"
+    odin stop
+    if [ "${AUTO_BACKUP_ON_SHUTDOWN:=0}" -eq 1 ]; then
+        log "Backup on shutdown triggered! Running backup tool..."
+        /bin/bash /home/steam/scripts/auto_backup.sh "shutdown"
+    fi
+    if [[ -n $TAIL_PID ]];then
+      kill $TAIL_PID
+    fi
 }
 
 initialize "Installing Valheim via Odin..."
 
-echo "
-Variables loaded.....
-
+log "Variables loaded....."
+log "
 Port: ${PORT}
 Name: ${NAME}
 World: ${WORLD}
 Public: ${PUBLIC}
 Password: (REDACTED)
-Auto Update: ${AUTO_UPDATE}
 "
 
-export SteamAppId=892970
-export PATH="/home/steam/.odin:$PATH"
+export SteamAppId=${APPID:-892970}
 
 # Setting up server
 log "Running Install..."
 odin install || exit 1
+
+log "Initializing Variables...."
+odin configure || exit 1
+
+trap 'cleanup' INT TERM
 
 log "Herding Cats..."
 log "Starting server..."
 
 odin start || exit 1
 
-trap 'cleanup' INT TERM EXIT
-
-cleanup() {
-    log "Halting server! Received interrupt!"
-    if [[ -n $TAIL_PID ]];then
-      kill $TAIL_PID
-    fi
-    odin stop
-    exit
-}
-
 initialize "
 Valheim Server Started...
 
 Keep an eye out for 'Game server connected' in the log!
 (this indicates its online without any errors.)
-" >> /home/steam/valheim/output.log
-tail -f /home/steam/valheim/output.log &
+" >> /home/steam/valheim/logs/output.log
+
+
+log_names=("valheim_server.log" "valheim_server.err" "output.log" "auto-update.out" "auto-backup.out")
+log_files=("${log_names[@]/#/\/home\/steam\/valheim\/logs/}")
+touch "${log_files[@]}"
+tail -F ${log_files[*]} &
 export TAIL_PID=$!
 wait $TAIL_PID

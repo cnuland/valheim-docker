@@ -5,15 +5,19 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.odin
+    volumes:
+    - odin-output:/data/odin/target/release
   valheim:
     depends_on:
       - odin
     image: mbround18/valheim:latest
     environment:
-      - PORT=30017
+      - PORT=2456
       - NAME="Created With Valheim Docker"
-      - PASSWORD="12345"
-      - TZ=America/Chicago
+      - PASSWORD="Change Me! Please."
+      - TZ=America/Los_Angeles
+      - AUTO_UPDATE=1
+      - AUTO_UPDATE_SCHEDULE="0 1 * * *"
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -24,3 +28,8 @@ services:
     volumes:
     - ./tmp/saves:/home/steam/.config/unity3d/IronGate/Valheim
     - ./tmp/server:/home/steam/valheim
+    - ./tmp/backups:/home/steam/backups
+    - odin-output:/home/steam/.odin
+
+volumes:
+  odin-output:
