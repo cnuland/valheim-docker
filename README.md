@@ -1,25 +1,38 @@
 <img src="./docs/assets/valheim-docker-logo.png" width="500" height="auto">
 
 # [Valheim]
+<a href="https://hub.docker.com/r/mbround18/valheim">
+    <img src="https://img.shields.io/docker/pulls/mbround18/valheim?style=for-the-badge">
+</a>
 
-![Docker Pulls](https://img.shields.io/docker/pulls/mbround18/valheim?style=for-the-badge)
-![Rust Build](https://img.shields.io/github/workflow/status/mbround18/valheim-docker/Rust?label=Rust&style=for-the-badge)
-![Docker Build](https://img.shields.io/github/workflow/status/mbround18/valheim-docker/Rust?label=Docker&style=for-the-badge)
+<a href="https://github.com/mbround18/valheim-docker/actions/workflows/docker-publish.yml">
+    <img src="https://img.shields.io/github/workflow/status/mbround18/valheim-docker/Rust?label=Rust&style=for-the-badge">
+</a>
+
+<a href="https://github.com/mbround18/valheim-docker/actions/workflows/rust.yml">
+    <img src="https://img.shields.io/github/workflow/status/mbround18/valheim-docker/Rust?label=Docker&style=for-the-badge">
+</a>
 
 
 
 ## Docker
 
 > [If you are looking for a guide on how to get started click here](https://github.com/mbround18/valheim-docker/discussions/28)
+> 
+> Mod Support! It is supported to launch the server with BepInEx but!!!!! as a disclaimer! You take responsibility for debugging why your server won't start.
+> Modding is not supported by the Valheim developers officially yet; Which means you WILL run into errors. This repo has been tested with running ValheimPlus as a test mod and does not have any issues.
+> See [Getting started with mods]
 
 ### Environment Variables
+
+> See further on down for advanced environment variables. 
 
 | Variable                 | Default                | Required | Description |
 |--------------------------|------------------------|----------|-------------|
 | TZ                       | `America/Los_Angeles`  | FALSE    | Sets what timezone your container is running on. This is used for timestamps and cron jobs. [Click Here for which timezones are valid.](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) |
 | PUID                     | `1000`                 | FALSE    | Sets the User Id of the steam user. |
 | PGID                     | `1000`                 | FALSE    | Sets the Group Id of the steam user. |
-| PORT                     | `2456`                 | TRUE     | Sets the port your server will listen on. Take not it will also listen on +2 (ex: 2456, 2457, 2458) |
+| PORT                     | `2456`                 | TRUE     | Sets the port your server will listen on. Take note it will also listen on +2 (ex: 2456, 2457, 2458) |
 | NAME                     | `Valheim Docker`       | TRUE     | The name of your server! Make it fun and unique! |
 | WORLD                    | `Dedicated`            | TRUE     | This is used to generate the name of your world. |
 | PUBLIC                   | `1`                    | FALSE    | Sets whether or not your server is public on the server list. |
@@ -32,7 +45,8 @@
 | AUTO_BACKUP_DAYS_TO_LIVE | `3`                    | FALSE    | This is the number of days you would like to keep backups for. While backups are compressed and generally small it is best to change this number as needed. |
 | AUTO_BACKUP_ON_UPDATE    | `0`                    | FALSE    | Create a backup on right before updating and starting your server. |
 | AUTO_BACKUP_ON_SHUTDOWN  | `0`                    | FALSE    | Create a backup on shutdown. |
-| ODIN_CONFIG_FILE         | `config.json`          | FALSE    | This file stores start parameters to restart the instance, change if you run multiple container instances on the same host |
+| WEBHOOK_URL              | ``                     | FALSE    | Supply this to get information regarding your server's status in a webhook or Discord notification! [Click here to learn how to get a webhook url for Discord](https://help.dashe.io/en/articles/2521940-how-to-create-a-discord-webhook-url) | 
+| UPDATE_ON_STARTUP        | `1`                    | FALSE    | Tries to update the server the container is started. |
 
 ### Docker Compose
 
@@ -87,21 +101,60 @@ services:
       - AUTO_BACKUP_DAYS_TO_LIVE=3
       - AUTO_BACKUP_ON_UPDATE=1
       - AUTO_BACKUP_ON_SHUTDOWN=1
-volumes:
-    - ./valheim/saves:/home/steam/.config/unity3d/IronGate/Valheim
-    - ./valheim/server:/home/steam/valheim
-    - ./valheim/backups:/home/steam/backups
+      - WEBHOOK_URL="https://discord.com/api/webhooks/IM_A_SNOWFLAKE/AND_I_AM_A_SECRET"
+      - UPDATE_ON_STARTUP=0
+    volumes:
+      - ./valheim/saves:/home/steam/.config/unity3d/IronGate/Valheim
+      - ./valheim/server:/home/steam/valheim
+      - ./valheim/backups:/home/steam/backups
 ```
-
 
 ### [Odin]
 
 This repo has a CLI tool called [Odin] in it! It is used for managing the server inside the container. If you are looking for instructions for it click here: [Odin]
 
+[Click here to see advanced environment variables for Odin](./docs/odin.md)
+
+### [BepInEx Support](./docs/bepinex.md)
+
+This repo automatically launches with the proper environment variables for BepInEx. 
+However, you have to install it manually in the container due to the fact that the modding community around Valheim is still in its infancy.
+
+[Click Here to view documentation on BepInEx Support](./docs/bepinex.md)
+
+
+### [Webhook Support](./docs/webhooks.md)
+
+This repo can automatically send notifications to discord via the WEBHOOK_URL variable. 
+Only use the documentation link below if you want advanced settings!
+
+[Click Here to view documentation on Webhook Support](./docs/webhooks.md)
+
+
+## Sponsors
+
+<a href="https://github.com/AtroposOrbis">
+  <img width=50 src="https://avatars.githubusercontent.com/u/8618455?s=460&u=935d96983cafa4f0e5dd822dad10c23e8c1b021e&v=4" />
+</a>
+<a href="https://github.com/AtroposOrbis"><img width=50 src="https://avatars.githubusercontent.com/u/13275296?s=460&v=4" /></a>
+
+## Release Notifications
+
+If you would like to have release notifications tied into your Discord server, click here: 
+
+<a href="https://discord.gg/3kTNUZz276">
+  <img src="https://img.shields.io/badge/Discord-Release%20Notifications-blue?label=Docker&style=for-the-badge"  />
+</a>
+
+**Note**: The discord is PURELY for release notifications and any + all permissions involving sending chat messages has been disabled. 
+[Any support for this repository must take place on the Discussions.](https://github.com/mbround18/valheim-docker/discussions)
+
 ## Versions: 
 
 - latest (Stable):
-  - [#100] Added backup feature to run based on cronjob. 
+  - [#100] Added backup feature to run based on cronjob.
+  - [#148] Added Mod support
+  - Added webhook configuration and documentation updates [#158]
 - 1.2.0 (Stable):
   - Readme update to include the versions section and environment variables section.
   - [#18] Changed to `root` as the default user to allow updated steams User+Group IDs.
@@ -128,6 +181,8 @@ This repo has a CLI tool called [Odin] in it! It is used for managing the server
   - Has a bug in which it does not read passed in variables appropriately to Odin. Env variables are not impacted see [#3]. 
 
 [//]: <> (Github Issues below...........)
+[#158]: https://github.com/mbround18/valheim-docker/pull/158
+[#148]: https://github.com/mbround18/valheim-docker/pull/148
 [#100]: https://github.com/mbround18/valheim-docker/pull/100
 [#89]: https://github.com/mbround18/valheim-docker/pull/89
 [#77]: https://github.com/mbround18/valheim-docker/pull/77
@@ -144,6 +199,7 @@ This repo has a CLI tool called [Odin] in it! It is used for managing the server
 [//]: <> (Links below...................)
 [Odin]: ./docs/odin.md
 [Valheim]: https://www.valheimgame.com/
+[Getting started with mods]: ./docs/getting_started_with_mods.md
 [If you need help figuring out a cron schedule click here]: https://crontab.guru/#0_1_*_*_*
 
 [//]: <> (Image Base Url: https://github.com/mbround18/valheim-docker/blob/main/docs/assets/name.png?raw=true)
