@@ -59,7 +59,7 @@ ENV PASSWORD "12345"
 
 COPY  ./src/scripts/*.sh /home/steam/scripts/
 COPY  ./src/scripts/entrypoint.sh /entrypoint.sh
-COPY --from=RustBuilder /data/odin/target/release/odin /usr/local/bin/odin
+COPY --from=runtime /usr/local/bin/odin /usr/local/bin/odin
 COPY ./src/scripts/steam_bashrc.sh /home/steam/.bashrc
 
 RUN chmod 755 /entrypoint.sh
